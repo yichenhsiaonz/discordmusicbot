@@ -6,20 +6,14 @@ A Java Discord bot written using the JDA wrapper and YouTube Data API.
 
 Java 19
 
-Maven
-
 Discord bot token
 
-YouTube Data API key
+# Usage (Windows)
 
+Install Java 19 with included installer
 
-# Usage
+Place Discord bot token in the file "discordbotkey.txt"
 
-Place Discord bot token in a file called "discordbotkey.txt"
+Run using the .bat file
 
-Place YouTube Data API key in a file called "youtubeapikey.txt"
-
-Place these two files in the root directory
-
-Run from command window in root directory with "mvn clean compile exec:java"
 
