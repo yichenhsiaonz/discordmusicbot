@@ -21,19 +21,20 @@ public class ResultHandler implements AudioLoadResultHandler {
 
     @Override
     public void trackLoaded(AudioTrack track) {
-        event.getHook().editOriginal("Adding to queue " + track.getInfo().title).queue();
+        event.getHook().editOriginal("Adding to queue: " + track.getInfo().title).queue();
         play(musicManager, track);
     }
 
     @Override
     public void playlistLoaded(AudioPlaylist playlist) {
-        AudioTrack firstTrack = playlist.getSelectedTrack();
-
-        if (firstTrack == null) {
-            firstTrack = playlist.getTracks().get(0);
+        if (playlist.getName().startsWith("Search results for:")) {
+            AudioTrack firstTrack = playlist.getTracks().get(0);
+            event.getHook().editOriginal("Adding to queue top search result: " + firstTrack.getInfo().title).queue();
+            play(musicManager, firstTrack);
+            return;
         }
 
-        event.getHook().editOriginal("Adding to queue " + firstTrack.getInfo().title + " (first track of playlist " + playlist.getName() + ")").queue();
+        event.getHook().editOriginal("Adding playlist to queue: " + playlist.getName()).queue();
 
         for(AudioTrack track : playlist.getTracks()) {
             play(musicManager, track);
@@ -42,7 +43,7 @@ public class ResultHandler implements AudioLoadResultHandler {
 
     @Override
     public void noMatches() {
-        event.getHook().editOriginal("Nothing found by " + trackUrl).queue();
+        event.getHook().editOriginal("Nothing found for: " + trackUrl).queue();
     }
 
     @Override

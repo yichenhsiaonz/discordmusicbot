@@ -17,7 +17,7 @@ public class PlayerManager {
     private PlayerManager() {
         this.musicManagers = new HashMap<>();
         this.playerManager = new DefaultAudioPlayerManager();
-        YoutubeAudioSourceManager ytSourceManager = new dev.lavalink.youtube.YoutubeAudioSourceManager(/*allowSearch:*/ true, true, true);
+        YoutubeAudioSourceManager ytSourceManager = new dev.lavalink.youtube.YoutubeAudioSourceManager(/*allowSearch:*/ true, true, false);
 
         playerManager.registerSourceManager(ytSourceManager);
         AudioSourceManagers.registerRemoteSources(playerManager,
@@ -43,9 +43,12 @@ public class PlayerManager {
         return INSTANCE;
     }
 
-    public void loadAndPlay(SlashCommandInteractionEvent event, final String trackUrl) {
+    public void loadAndPlay(SlashCommandInteractionEvent event, String trackUrl) {
         GuildMusicManager musicManager = getGuildAudioPlayer(event.getGuild());
-
+        //check if url is a valid url
+        if (!trackUrl.startsWith("http")) {
+            trackUrl = "ytsearch:" + trackUrl;
+        }
         playerManager.loadItemOrdered(musicManager, trackUrl, new ResultHandler(event, musicManager, trackUrl));
     }
 

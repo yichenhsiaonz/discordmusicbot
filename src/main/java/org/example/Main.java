@@ -1,19 +1,9 @@
 package org.example;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
-
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -24,7 +14,6 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.managers.AudioManager;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import org.example.lavaplayer.PlayerManager;
-import org.example.youtube.YouTubeSearch;
 
 import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
 
@@ -95,11 +84,6 @@ public class Main extends ListenerAdapter {
                 joinVoiceChannel(event);
                 OptionMapping option = event.getOption("content");
                 String content = option.getAsString();
-                //check if trackUrl is a valid URL
-                if (!content.startsWith("http")) {
-                    // get the first youtube video from the search term
-                    content = YouTubeSearch.videoIdSearch(content);
-                }
                 PlayerManager.getInstance().loadAndPlay(event, content);
                 break;
             case "skip":
