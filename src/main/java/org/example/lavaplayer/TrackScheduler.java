@@ -81,7 +81,12 @@ public class TrackScheduler extends AudioEventAdapter {
             queue.offer(player.getPlayingTrack().makeClone());
             player.startTrack(queue.poll(), false);
         } else {
-            player.startTrack(queue.poll(), false);
+            AudioTrack nextTrack = queue.poll();
+            if (nextTrack != null) {
+                player.startTrack(nextTrack, false);
+            } else {
+                player.stopTrack();
+            }
         }
         return player.getPlayingTrack().getInfo().title;
     }

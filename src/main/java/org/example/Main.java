@@ -87,8 +87,10 @@ public class Main extends ListenerAdapter {
                 PlayerManager.getInstance().loadAndPlay(event, content);
                 break;
             case "skip":
-                String nextTitle = PlayerManager.getInstance().getTrackScheduler(event).skipTrack();
-                if(nextTitle == null) {
+                String nextTitle;
+                try{
+                    nextTitle = PlayerManager.getInstance().getTrackScheduler(event).skipTrack();
+                } catch (Exception e) {
                     event.reply("No more tracks in queue").queue();
                     return;
                 }
