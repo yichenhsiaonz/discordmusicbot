@@ -1,6 +1,6 @@
 # discordmusicbot
 
-A Java Discord bot written using the JDA wrapper and YouTube Data API.
+A Java Discord bot written using the JDA wrapper
 
 # Requirements:
 
