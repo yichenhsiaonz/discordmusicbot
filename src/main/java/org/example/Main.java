@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.managers.AudioManager;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import org.example.lavaplayer.PlayerManager;
 
+import static net.dv8tion.jda.api.interactions.commands.OptionType.BOOLEAN;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
 
 public class Main extends ListenerAdapter {
@@ -70,6 +71,10 @@ public class Main extends ListenerAdapter {
         commands.addCommands(
                 Commands.slash("remove", "Remove song from queue")
                         .addOption(STRING, "index", "Index of song to remove", true)
+        );
+        commands.addCommands(
+          Commands.slash("autoplay", "Turn autoplay on or off")
+                  .addOption(BOOLEAN, "boolean", "Turn autoplay on or off", true)
         );
         commands.queue();
 
@@ -131,6 +136,11 @@ public class Main extends ListenerAdapter {
                 break;
             case "remove":
                 PlayerManager.getInstance().getTrackScheduler(event).remove(event);
+                break;
+            case "autoplay":
+                boolean autoPlay = event.getOption("boolean").getAsBoolean();
+                PlayerManager.getInstance().getTrackScheduler(event).setAutoPlay(autoPlay);
+                event.reply("Autoplay is " + (autoPlay ? "on" : "off")).queue();
                 break;
         }
     }

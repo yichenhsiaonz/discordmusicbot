@@ -30,7 +30,7 @@ public class PlayerManager {
         GuildMusicManager musicManager = musicManagers.get(guildId);
 
         if (musicManager == null) {
-            musicManager = new GuildMusicManager(playerManager);
+            musicManager = new GuildMusicManager(playerManager, guild);
             musicManagers.put(guildId, musicManager);
         }
 
@@ -50,6 +50,11 @@ public class PlayerManager {
             trackUrl = "ytsearch:" + trackUrl;
         }
         playerManager.loadItemOrdered(musicManager, trackUrl, new ResultHandler(event, musicManager, trackUrl));
+    }
+
+    public void autoPlay(Guild guild, String artistName) {
+        GuildMusicManager musicManager = getGuildAudioPlayer(guild);
+        playerManager.loadItemOrdered(musicManager, "ytsearch:" + artistName, new AutoPlayResultHandler(musicManager));
     }
 
     public TrackScheduler getTrackScheduler(SlashCommandInteractionEvent event) {

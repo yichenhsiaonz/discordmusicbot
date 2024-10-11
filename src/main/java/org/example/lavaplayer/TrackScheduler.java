@@ -4,25 +4,36 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class TrackScheduler extends AudioEventAdapter {
+    private final Guild guild;
     private final AudioPlayer player;
     private final BlockingQueue<AudioTrack> queue;
+    private final BlockingQueue<AudioTrack> autoPlayQueue;
 
     private String mode = "off";
+    private boolean autoPlay = false;
+    private boolean isAutoPlaying = false;
 
-    public TrackScheduler(AudioPlayer player) {
+    public TrackScheduler(AudioPlayer player, Guild guild) {
         this.player = player;
         this.queue = new LinkedBlockingQueue<>();
+        this.autoPlayQueue = new LinkedBlockingQueue<>();
+        this.guild = guild;
     }
 
     public void queue(AudioTrack track) {
         if (!player.startTrack(track, true)) {
             queue.offer(track);
         }
+    }
+
+    public void autoPlay(AudioTrack track) {
+        autoPlayQueue.offer(track);
     }
 
     public String getQueue() {
@@ -43,7 +54,7 @@ public class TrackScheduler extends AudioEventAdapter {
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         if (endReason.mayStartNext) {
-            skipTrack();
+            nextTrack(track);
         }
     }
 
@@ -75,17 +86,29 @@ public class TrackScheduler extends AudioEventAdapter {
     }
 
     public String skipTrack() {
+        return nextTrack(player.getPlayingTrack());
+    }
+
+    public String nextTrack(AudioTrack previousTrack) {
         if(mode.equals("track")) {
-            player.getPlayingTrack().setPosition(0);
+            previousTrack.setPosition(0);
         } else if(mode.equals("queue")) {
-            queue.offer(player.getPlayingTrack().makeClone());
+            queue.offer(previousTrack.makeClone());
             player.startTrack(queue.poll(), false);
         } else {
             AudioTrack nextTrack = queue.poll();
             if (nextTrack != null) {
+                isAutoPlaying = false;
                 player.startTrack(nextTrack, false);
             } else {
                 player.stopTrack();
+                if(autoPlay) {
+                    if(!isAutoPlaying) {
+                        isAutoPlaying = true;
+                        PlayerManager.getInstance().autoPlay(guild, previousTrack.getInfo().author);
+                    }
+                    player.startTrack(autoPlayQueue.poll(), false);
+                }
             }
         }
         return player.getPlayingTrack().getInfo().title;
@@ -97,5 +120,9 @@ public class TrackScheduler extends AudioEventAdapter {
 
     public void resumeTrack() {
         player.setPaused(false);
+    }
+
+    public void setAutoPlay(boolean autoPlay) {
+        this.autoPlay = autoPlay;
     }
 }
