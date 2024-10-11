@@ -96,6 +96,7 @@ public class Main extends ListenerAdapter {
                 try{
                     nextTitle = PlayerManager.getInstance().getTrackScheduler(event).skipTrack();
                 } catch (Exception e) {
+                    e.printStackTrace();
                     event.reply("No more tracks in queue").queue();
                     return;
                 }

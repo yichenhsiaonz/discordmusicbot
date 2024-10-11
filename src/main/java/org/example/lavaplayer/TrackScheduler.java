@@ -17,7 +17,7 @@ public class TrackScheduler extends AudioEventAdapter {
 
     private String mode = "off";
     private boolean autoPlay = false;
-    private boolean isAutoPlaying = false;
+    private String previousArtist = "";
 
     public TrackScheduler(AudioPlayer player, Guild guild) {
         this.player = player;
@@ -27,6 +27,9 @@ public class TrackScheduler extends AudioEventAdapter {
     }
 
     public void queue(AudioTrack track) {
+        previousArtist = track.getInfo().author;
+        autoPlayQueue.clear();
+        System.out.println("Previous artist: " + previousArtist);
         if (!player.startTrack(track, true)) {
             queue.offer(track);
         }
@@ -98,16 +101,24 @@ public class TrackScheduler extends AudioEventAdapter {
         } else {
             AudioTrack nextTrack = queue.poll();
             if (nextTrack != null) {
-                isAutoPlaying = false;
                 player.startTrack(nextTrack, false);
             } else {
                 player.stopTrack();
-                if(autoPlay) {
-                    if(!isAutoPlaying) {
-                        isAutoPlaying = true;
-                        PlayerManager.getInstance().autoPlay(guild, previousTrack.getInfo().author);
+                if(!previousArtist.isEmpty() && autoPlay) {
+                    AudioTrack autoPlayTrack = autoPlayQueue.poll();
+                    if(autoPlayTrack != null) {
+                        player.startTrack(autoPlayTrack, false);
+                    } else {
+                        PlayerManager.getInstance().autoPlay(guild, previousArtist);
+                        try {
+                            autoPlayTrack = autoPlayQueue.take();
+                            player.startTrack(autoPlayTrack, false);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
-                    player.startTrack(autoPlayQueue.poll(), false);
+                } else {
+                    autoPlayQueue.clear();
                 }
             }
         }
