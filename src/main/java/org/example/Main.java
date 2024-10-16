@@ -45,9 +45,6 @@ public class Main extends ListenerAdapter {
                 Commands.slash("pause", "Pause song")
         );
         commands.addCommands(
-                Commands.slash("dice", "Roll a dice")
-        );
-        commands.addCommands(
                 Commands.slash("resume", "Resume song")
         );
         commands.addCommands(
