@@ -117,7 +117,11 @@ public class TrackScheduler extends AudioEventAdapter {
                     }
 
                     if(previousTrack.getInfo().title.equals(autoPlayTrack.getInfo().title)) {
-                        autoPlayTrack = autoPlayQueue.poll();
+                        try{
+                            autoPlayTrack = autoPlayQueue.take();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                     player.startTrack(autoPlayTrack, false);
                 } else {
