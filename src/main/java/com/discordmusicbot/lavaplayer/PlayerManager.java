@@ -1,4 +1,4 @@
-package org.example.lavaplayer;
+package com.discordmusicbot.lavaplayer;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
@@ -54,7 +54,7 @@ public class PlayerManager {
 
     public void autoPlay(Guild guild, String artistName) {
         GuildMusicManager musicManager = getGuildAudioPlayer(guild);
-        playerManager.loadItemOrdered(musicManager, "ytsearch:" + artistName, new AutoPlayResultHandler(musicManager));
+        playerManager.loadItemOrdered(musicManager, "ytsearch:" + artistName + " music", new AutoPlayResultHandler(musicManager));
     }
 
     public TrackScheduler getTrackScheduler(SlashCommandInteractionEvent event) {

@@ -1,4 +1,4 @@
-package org.example.lavaplayer;
+package com.discordmusicbot.lavaplayer;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;

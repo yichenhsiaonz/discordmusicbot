@@ -60,7 +60,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>org.example.Main</mainClass>
+                    <mainClass>com.discordmusicbot.Main</mainClass>
                 </configuration>
             </plugin>
             <plugin>
@@ -78,7 +78,7 @@
                 <configuration>
                     <transformers>
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                            <mainClass>org.example.Main</mainClass>
+                            <mainClass>com.discordmusicbot.Main</mainClass>
                         </transformer>
                     </transformers>
                     <shadedArtifactAttached>true</shadedArtifactAttached>

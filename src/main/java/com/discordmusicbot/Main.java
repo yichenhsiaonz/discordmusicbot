@@ -1,6 +1,8 @@
-package org.example;
+package com.discordmusicbot;
 
 import java.nio.charset.StandardCharsets;
+
+import com.discordmusicbot.lavaplayer.PlayerManager;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -13,7 +15,6 @@ import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.managers.AudioManager;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
-import org.example.lavaplayer.PlayerManager;
 
 import static net.dv8tion.jda.api.interactions.commands.OptionType.BOOLEAN;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
@@ -83,12 +84,17 @@ public class Main extends ListenerAdapter {
 
         switch (command) {
             case "play":
-                joinVoiceChannel(event);
-                OptionMapping option = event.getOption("content");
-                String content = option.getAsString();
-                PlayerManager.getInstance().loadAndPlay(event, content);
+                if(joinVoiceChannel(event)){
+                    OptionMapping option = event.getOption("content");
+                    String content = option.getAsString();
+                    PlayerManager.getInstance().loadAndPlay(event, content);
+                }
                 break;
             case "skip":
+                if(!checkSameChannel(event)) {
+                    event.reply("Not in your voice channel").queue();
+                    return;
+                }
                 String nextTitle;
                 try{
                     nextTitle = PlayerManager.getInstance().getTrackScheduler(event).skipTrack();
@@ -100,17 +106,33 @@ public class Main extends ListenerAdapter {
                 event.reply("Skipped to next track: " + nextTitle).queue();
                 break;
             case "queue":
+                if(!checkSameChannel(event)) {
+                    event.reply("Not in your voice channel").queue();
+                    return;
+                }
                 event.reply(PlayerManager.getInstance().getTrackScheduler(event).getQueue()).queue();
                 break;
             case "pause":
+                if(!checkSameChannel(event)) {
+                    event.reply("Not in your voice channel").queue();
+                    return;
+                }
                 PlayerManager.getInstance().getTrackScheduler(event).pauseTrack();
                 event.reply("Paused track").queue();
                 break;
             case "resume":
+                if(!checkSameChannel(event)) {
+                    event.reply("Not in your voice channel").queue();
+                    return;
+                }
                 PlayerManager.getInstance().getTrackScheduler(event).resumeTrack();
                 event.reply("Resumed track").queue();
                 break;
             case "clear":
+                if(!checkSameChannel(event)) {
+                    event.reply("Not in your voice channel").queue();
+                    return;
+                }
                 PlayerManager.getInstance().getTrackScheduler(event).clearQueue();
                 event.reply("Cleared queue").queue();
                 break;
@@ -130,12 +152,24 @@ public class Main extends ListenerAdapter {
                     event.reply("Joined voice channel").queue();
                 }
             case "loop":
+                if(!checkSameChannel(event)) {
+                    event.reply("Not in your voice channel").queue();
+                    return;
+                }
                 PlayerManager.getInstance().getTrackScheduler(event).setLoop(event);
                 break;
             case "remove":
+                if(!checkSameChannel(event)) {
+                    event.reply("Not in your voice channel").queue();
+                    return;
+                }
                 PlayerManager.getInstance().getTrackScheduler(event).remove(event);
                 break;
             case "autoplay":
+                if(!checkSameChannel(event)) {
+                    event.reply("Not in your voice channel").queue();
+                    return;
+                }
                 boolean autoPlay = event.getOption("boolean").getAsBoolean();
                 PlayerManager.getInstance().getTrackScheduler(event).setAutoPlay(autoPlay);
                 event.reply("Autoplay is " + (autoPlay ? "on" : "off")).queue();
@@ -149,13 +183,15 @@ public class Main extends ListenerAdapter {
         return userChannel != null && currentChannel != null && userChannel.getId().equals(currentChannel.getId());
     }
 
-    private void joinVoiceChannel(SlashCommandInteractionEvent event) {
+    private boolean joinVoiceChannel(SlashCommandInteractionEvent event) {
         VoiceChannel userChannel = (VoiceChannel) event.getMember().getVoiceState().getChannel();
         if(userChannel != null) {
             AudioManager audioManager = event.getGuild().getAudioManager();
             audioManager.openAudioConnection(userChannel);
+            return true;
         } else {
             event.reply("You need to be in a voice channel").queue();
+            return false;
         }
     }
 }

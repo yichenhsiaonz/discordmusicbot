@@ -1,4 +1,4 @@
-package org.example.lavaplayer;
+package com.discordmusicbot.lavaplayer;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
@@ -106,9 +106,7 @@ public class TrackScheduler extends AudioEventAdapter {
                 player.stopTrack();
                 if(!previousArtist.isEmpty() && autoPlay) {
                     AudioTrack autoPlayTrack = autoPlayQueue.poll();
-                    if(autoPlayTrack != null) {
-                        player.startTrack(autoPlayTrack, false);
-                    } else {
+                    if(autoPlayTrack == null) {
                         PlayerManager.getInstance().autoPlay(guild, previousArtist);
                         try {
                             autoPlayTrack = autoPlayQueue.take();
@@ -117,6 +115,11 @@ public class TrackScheduler extends AudioEventAdapter {
                             e.printStackTrace();
                         }
                     }
+
+                    if(previousTrack.getInfo().title.equals(autoPlayTrack.getInfo().title)) {
+                        autoPlayTrack = autoPlayQueue.poll();
+                    }
+                    player.startTrack(autoPlayTrack, false);
                 } else {
                     autoPlayQueue.clear();
                 }
