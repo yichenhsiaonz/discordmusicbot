@@ -4,13 +4,11 @@ A Java Discord bot written using the JDA wrapper
 
 # Requirements:
 
-Java 19
+Java 19 (You can download here: https://github.com/corretto/corretto-19/releases)
 
 Discord bot token
 
 # Usage (Windows)
-
-Install Java 19 with included installer
 
 Place Discord bot token in the file "discordbotkey.txt"
 
