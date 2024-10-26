@@ -29,7 +29,6 @@ public class TrackScheduler extends AudioEventAdapter {
     public void queue(AudioTrack track) {
         previousArtist = track.getInfo().author;
         autoPlayQueue.clear();
-        System.out.println("Previous artist: " + previousArtist);
         if (!player.startTrack(track, true)) {
             queue.offer(track);
         }
@@ -110,7 +109,6 @@ public class TrackScheduler extends AudioEventAdapter {
                         PlayerManager.getInstance().autoPlay(guild, previousArtist);
                         try {
                             autoPlayTrack = autoPlayQueue.take();
-                            player.startTrack(autoPlayTrack, false);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -129,7 +127,11 @@ public class TrackScheduler extends AudioEventAdapter {
                 }
             }
         }
-        return player.getPlayingTrack().getInfo().title;
+        try{
+            return player.getPlayingTrack().getInfo().title;
+        } catch (NullPointerException e) {
+            return "No more tracks in queue";
+        }
     }
 
     public void pauseTrack() {

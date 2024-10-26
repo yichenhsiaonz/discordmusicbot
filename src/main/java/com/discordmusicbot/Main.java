@@ -40,47 +40,29 @@ public class Main extends ListenerAdapter {
         commands.addCommands(
                 Commands.slash("play", "Play song")
                         .addOption(STRING, "content", "Link or search", true)
-        );
-        commands.addCommands(
-                Commands.slash("skip", "Skip song")
-        );
-        commands.addCommands(
-                Commands.slash("queue", "Queue")
-        );
-        commands.addCommands(
-                Commands.slash("pause", "Pause song")
-        );
-        commands.addCommands(
-                Commands.slash("resume", "Resume song")
-        );
-        commands.addCommands(
-                Commands.slash("clear", "Clear queue")
-        );
-        commands.addCommands(
-                Commands.slash("leave", "Leave voice channel")
-        );
-        commands.addCommands(
-                Commands.slash("join", "Join voice channel")
-        );
-        commands.addCommands(
-                Commands.slash("loop", "Loop")
+                )
+                .addCommands(Commands.slash("skip", "Skip song"))
+                .addCommands(Commands.slash("queue", "Queue"))
+                .addCommands(Commands.slash("pause", "Pause song"))
+                .addCommands(Commands.slash("resume", "Resume song"))
+                .addCommands(Commands.slash("clear", "Clear queue"))
+                .addCommands(Commands.slash("leave", "Leave voice channel"))
+                .addCommands(Commands.slash("join", "Join voice channel"))
+                .addCommands(Commands.slash("loop", "Loop")
                         .addOptions(
                                 new OptionData(STRING, "mode", "Loop mode", true)
                                         .addChoice("Track", "track")
                                         .addChoice("Queue", "queue")
                                         .addChoice("Off", "off")
                         )
-        );
-        commands.addCommands(
-                Commands.slash("remove", "Remove song from queue")
+                )
+                .addCommands(Commands.slash("remove", "Remove song from queue")
                         .addOption(STRING, "index", "Index of song to remove", true)
-        );
-        commands.addCommands(
-          Commands.slash("autoplay", "Turn autoplay on or off")
-                  .addOption(BOOLEAN, "boolean", "Turn autoplay on or off", true)
-        );
-        commands.queue();
-
+                )
+                .addCommands(Commands.slash("autoplay", "Turn autoplay on or off")
+                        .addOption(BOOLEAN, "boolean", "Turn autoplay on or off", true)
+                )
+                .queue();
     }
 
     @Override
