@@ -3,9 +3,12 @@ package com.discordmusicbot;
 import java.nio.charset.StandardCharsets;
 
 import com.discordmusicbot.lavaplayer.PlayerManager;
+
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+
 import java.nio.file.Files;
 import java.nio.file.Paths;
+
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -22,13 +25,15 @@ import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
 public class Main extends ListenerAdapter {
 
     private static final String KEYPATH = "discordbotkey.txt";
-
     public static void main(String[] args) throws Exception {
+
         String token = Files.readAllLines(Paths.get(KEYPATH), StandardCharsets.UTF_8).get(0);
 
         JDA jda = JDABuilder.createDefault(token)
             .addEventListeners(new Main())
             .build();
+
+        PlayerManager.getInstance().load();
 
         CommandListUpdateAction commands = jda.updateCommands();
 

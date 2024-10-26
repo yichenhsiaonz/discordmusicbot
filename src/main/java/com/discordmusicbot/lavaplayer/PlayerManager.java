@@ -18,6 +18,8 @@ public class PlayerManager {
         this.musicManagers = new HashMap<>();
         this.playerManager = new DefaultAudioPlayerManager();
         YoutubeAudioSourceManager ytSourceManager = new dev.lavalink.youtube.YoutubeAudioSourceManager(/*allowSearch:*/ true, true, false);
+        ytSourceManager.useOauth2(null, false);
+
 
         playerManager.registerSourceManager(ytSourceManager);
         AudioSourceManagers.registerRemoteSources(playerManager,
@@ -60,5 +62,9 @@ public class PlayerManager {
     public TrackScheduler getTrackScheduler(SlashCommandInteractionEvent event) {
         GuildMusicManager musicManager = getGuildAudioPlayer(event.getGuild());
         return musicManager.scheduler;
+    }
+
+    public void load(){
+        // prevent lazy loading
     }
 }
