@@ -60,31 +60,25 @@ public class TrackScheduler extends AudioEventAdapter {
         }
     }
 
-    public void setLoop(SlashCommandInteractionEvent event) {
+    public String setLoop(SlashCommandInteractionEvent event) {
         mode = event.getOption("mode").getAsString();
-        switch (mode) {
-            case "off":
-                event.reply("Loop is off").queue();
-                break;
-            case "track":
-                event.reply("Looping track").queue();
-                break;
-            case "queue":
-                event.reply("Looping queue").queue();
-                break;
-        }
+        return switch (mode) {
+            case "off" -> "Loop is off";
+            case "track" -> "Looping track";
+            case "queue" -> "Looping queue";
+            default -> "Invalid mode";
+        };
     }
 
-    public void remove(SlashCommandInteractionEvent event) {
+    public String remove(SlashCommandInteractionEvent event) {
         int index = event.getOption("index").getAsInt();
         if(index < 1 || index > queue.size()) {
-            event.reply("Invalid index").queue();
-            return;
+            return "Invalid index";
         }
         AudioTrack[] tracks = queue.toArray(new AudioTrack[0]);
         AudioTrack removed = tracks[index - 1];
         queue.remove(removed);
-        event.reply("Removed track: " + removed.getInfo().title).queue();
+        return "Removed track: " + removed.getInfo().title;
     }
 
     public String skipTrack() {

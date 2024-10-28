@@ -64,6 +64,18 @@ public class PlayerManager {
         return musicManager.scheduler;
     }
 
+    public void initPlayer(Guild guild) {
+        getGuildAudioPlayer(guild);
+    }
+
+    public void destroyPlayer(Guild guild) {
+        musicManagers.get(Long.parseLong(guild.getId())).disconnect();
+    }
+
+    public void deregisterPlayer(Guild guild) {
+        musicManagers.remove(Long.parseLong(guild.getId()));
+    }
+
     public void load(){
         // prevent lazy loading
     }

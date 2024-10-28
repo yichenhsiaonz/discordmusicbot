@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.concurrent.ExecutorService;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -86,7 +87,6 @@ public class Main extends ListenerAdapter {
                 try{
                     nextTitle = PlayerManager.getInstance().getTrackScheduler(event).skipTrack();
                 } catch (Exception e) {
-                    e.printStackTrace();
                     event.reply("No more tracks in queue").queue();
                     return;
                 }
@@ -125,7 +125,7 @@ public class Main extends ListenerAdapter {
                 break;
             case "leave":
                 if (checkSameChannel(event)) {
-                    event.getGuild().getAudioManager().closeAudioConnection();
+                    PlayerManager.getInstance().destroyPlayer(event.getGuild());
                     event.reply("Left voice channel").queue();
                 } else {
                     event.reply("Not in your voice channel").queue();
@@ -143,14 +143,14 @@ public class Main extends ListenerAdapter {
                     event.reply("Not in your voice channel").queue();
                     return;
                 }
-                PlayerManager.getInstance().getTrackScheduler(event).setLoop(event);
+                event.reply(PlayerManager.getInstance().getTrackScheduler(event).setLoop(event)).queue();
                 break;
             case "remove":
                 if(!checkSameChannel(event)) {
                     event.reply("Not in your voice channel").queue();
                     return;
                 }
-                PlayerManager.getInstance().getTrackScheduler(event).remove(event);
+                event.reply(PlayerManager.getInstance().getTrackScheduler(event).remove(event)).queue();
                 break;
             case "autoplay":
                 if(!checkSameChannel(event)) {
@@ -175,9 +175,9 @@ public class Main extends ListenerAdapter {
         if(userChannel != null) {
             AudioManager audioManager = event.getGuild().getAudioManager();
             audioManager.openAudioConnection(userChannel);
+            PlayerManager.getInstance().initPlayer(event.getGuild());
             return true;
         } else {
-            event.reply("You need to be in a voice channel").queue();
             return false;
         }
     }
