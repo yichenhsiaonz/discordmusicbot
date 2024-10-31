@@ -6,8 +6,13 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import dev.lavalink.youtube.YoutubeAudioSourceManager;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+
+import java.io.File;
+import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.discordmusicbot.Main.getRefreshToken;
 
 public class PlayerManager {
     private static PlayerManager INSTANCE = new PlayerManager();
@@ -17,9 +22,20 @@ public class PlayerManager {
     private PlayerManager() {
         this.musicManagers = new HashMap<>();
         this.playerManager = new DefaultAudioPlayerManager();
-        YoutubeAudioSourceManager ytSourceManager = new dev.lavalink.youtube.YoutubeAudioSourceManager(/*allowSearch:*/ true, true, false);
-        ytSourceManager.useOauth2(null, false);
 
+        YoutubeAudioSourceManager ytSourceManager = new dev.lavalink.youtube.YoutubeAudioSourceManager(/*allowSearch:*/ true, true, false);
+
+        String refreshToken = getRefreshToken();
+        if(refreshToken == null) {
+            getNewToken(ytSourceManager);
+        }
+        try{
+            ytSourceManager.useOauth2(refreshToken, false);
+        } catch (Exception e) {
+            getNewToken(ytSourceManager);
+        }
+
+        ytSourceManager.getOauth2RefreshToken();
 
         playerManager.registerSourceManager(ytSourceManager);
         AudioSourceManagers.registerRemoteSources(playerManager,
@@ -78,5 +94,32 @@ public class PlayerManager {
 
     public void load(){
         // prevent lazy loading
+    }
+
+    private void getNewToken(YoutubeAudioSourceManager ytSourceManager){
+        ytSourceManager.useOauth2(null, false);
+        Thread tokenThread = new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                ytSourceManager.getOauth2RefreshToken();
+                if(ytSourceManager.getOauth2RefreshToken() != null) {
+                    File file = new File("ytrefreshtoken.txt");
+                    FileWriter writer;
+                    try {
+                        writer = new FileWriter(file, false);
+                        writer.write(ytSourceManager.getOauth2RefreshToken());
+                        writer.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                }
+            }
+        });
+        tokenThread.start();
     }
 }

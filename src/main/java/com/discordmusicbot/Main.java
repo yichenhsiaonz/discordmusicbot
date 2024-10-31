@@ -26,9 +26,19 @@ import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
 public class Main extends ListenerAdapter {
 
     private static final String KEYPATH = "discordbotkey.txt";
+    private static final String REFRESHTOKENPATH = "ytrefreshtoken.txt";
+
+    private static String refreshToken;
+
     public static void main(String[] args) throws Exception {
 
         String token = Files.readAllLines(Paths.get(KEYPATH), StandardCharsets.UTF_8).get(0);
+
+        try{
+            refreshToken = Files.readAllLines(Paths.get(REFRESHTOKENPATH), StandardCharsets.UTF_8).get(0);
+        } catch (Exception e) {
+            refreshToken = null;
+        }
 
         JDA jda = JDABuilder.createDefault(token)
             .addEventListeners(new Main())
@@ -180,5 +190,9 @@ public class Main extends ListenerAdapter {
         } else {
             return false;
         }
+    }
+
+    public static String getRefreshToken() {
+        return refreshToken;
     }
 }

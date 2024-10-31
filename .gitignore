@@ -40,6 +40,7 @@ build/
 
 ### Keys ###
 discordbotkey.txt
+ytrefreshtoken.txt
 
 ### Build ###
 discord_music_bot.jar
