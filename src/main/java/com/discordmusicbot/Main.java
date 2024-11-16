@@ -1,7 +1,9 @@
 package com.discordmusicbot;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 
 import com.discordmusicbot.lavaplayer.PlayerManager;
@@ -32,8 +34,11 @@ public class Main extends ListenerAdapter {
 
 	private static final String KEYPATH = "discordbotkey.txt";
 	private static final String REFRESHTOKENPATH = "ytrefreshtoken.txt";
+	private static final String POTOKENPATH = "potoken.txt";
 
 	private static String refreshToken;
+	private static String poToken;
+	private static String visitorData;
 
 	public static void main(String[] args) throws Exception {
 
@@ -41,8 +46,18 @@ public class Main extends ListenerAdapter {
 
 		try{
 			refreshToken = Files.readAllLines(Paths.get(REFRESHTOKENPATH), StandardCharsets.UTF_8).get(0);
+
 		} catch (Exception e) {
 			refreshToken = null;
+		}
+
+		try {
+			List<String> lines = Files.readAllLines(Paths.get(POTOKENPATH), StandardCharsets.UTF_8);
+			poToken = lines.get(0);
+			visitorData = lines.get(1);
+		} catch (Exception e) {
+			poToken = null;
+			visitorData = null;
 		}
 
 		JDA jda = JDABuilder.createDefault(token)
@@ -206,10 +221,21 @@ public class Main extends ListenerAdapter {
 		return refreshToken;
 	}
 
+	public static String getPoToken() {
+		return poToken;
+	}
+
+	public static String getVisitorData() {
+		return visitorData;
+	}
+
 	private static void overrideAllTracks(){
+		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(System.out));
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		while (true) {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 			try{
+				writer.write("Enter track: ");
+				writer.flush();
 				String line = reader.readLine();
 				System.out.println("Overriding: " + line);
 				PlayerManager.getInstance().consoleOverride(line);

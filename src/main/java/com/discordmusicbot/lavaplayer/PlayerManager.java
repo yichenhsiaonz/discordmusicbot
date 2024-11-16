@@ -9,6 +9,7 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import dev.lavalink.youtube.YoutubeAudioSourceManager;
+import dev.lavalink.youtube.clients.Web;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
@@ -17,7 +18,7 @@ import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.discordmusicbot.Main.getRefreshToken;
+import static com.discordmusicbot.Main.*;
 
 public class PlayerManager {
 	private static final PlayerManager INSTANCE = new PlayerManager();
@@ -29,6 +30,11 @@ public class PlayerManager {
 		this.playerManager = new DefaultAudioPlayerManager();
 
 		YoutubeAudioSourceManager ytSourceManager = new dev.lavalink.youtube.YoutubeAudioSourceManager(/*allowSearch:*/ true, true, false);
+		String  poToken = getPoToken();
+		String visitorData = getVisitorData();
+		if(poToken != null && visitorData != null) {
+			Web.setPoTokenAndVisitorData(poToken, visitorData);
+		}
 
 		String refreshToken = getRefreshToken();
 		if(refreshToken == null) {
