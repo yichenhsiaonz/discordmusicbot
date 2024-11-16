@@ -15,3 +15,5 @@ Place Discord bot token in the file "discordbotkey.txt"
 Run using the .bat file
 
 Follow the instructions in the command window to sign into a YouTube account for OAuth
+
+Please use https://github.com/iv-org/youtube-trusted-session-generator to generate a POToken
